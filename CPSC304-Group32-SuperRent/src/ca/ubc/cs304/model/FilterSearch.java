@@ -10,6 +10,8 @@ public class FilterSearch {
     private Timestamp fromDate;
     private Timestamp toDate;
 
+    public FilterSearch(){}
+
     public FilterSearch(String vtname, String location, String city, Timestamp fromDate, Timestamp toDate) {
         this.vtname = vtname;
         this.location = location;

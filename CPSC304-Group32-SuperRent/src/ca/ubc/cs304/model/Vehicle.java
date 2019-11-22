@@ -17,6 +17,22 @@ public class Vehicle {
     private String location;
     private String city;
 
+    public Vehicle(){}
+
+    public Vehicle(int vid, int vlicense, Timestamp make, String model, int year, String color, float odometer, String status, String vtname, String location, String city) {
+        this.vid = vid;
+        this.vlicense = vlicense;
+        this.make = make;
+        this.model = model;
+        this.year = year;
+        this.color = color;
+        this.odometer = odometer;
+        this.status = status;
+        this.vtname = vtname;
+        this.location = location;
+        this.city = city;
+    }
+
     public int getVid() {
         return vid;
     }

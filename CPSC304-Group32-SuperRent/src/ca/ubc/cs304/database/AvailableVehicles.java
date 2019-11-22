@@ -26,7 +26,6 @@ public class AvailableVehicles {
     }
 
     public ArrayList<Vehicle> getNumAvailable(){
-        ArrayList<Vehicle> vehicles = new ArrayList<>();
 
         Statement stmt = null;
         try {
@@ -49,6 +48,7 @@ public class AvailableVehicles {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         return (ArrayList<Vehicle>) vehicles.clone();
@@ -102,21 +102,25 @@ public class AvailableVehicles {
     private static int setQueries(String field, String fieldName, StringBuffer allVehicles, StringBuffer unavailableVehicles, int numFilters){
         if(field != null){
             if(numFilters == 0){
-                allVehicles.append(" where V1." + fieldName + " = " + field);
+                allVehicles.append(" where V1." + fieldName + " = " + makeStringSql(field));
                 numFilters++;
             }
             else {
-                allVehicles.append(" and V1." + fieldName + " = " + field);
+                allVehicles.append(" and V1." + fieldName + " = " + makeStringSql(field));
             }
-            unavailableVehicles.append(" and V1." + fieldName + " = " + field);
+            unavailableVehicles.append(" and V1." + fieldName + " = " + makeStringSql(field));
         }
         return numFilters;
     }
 
 
     public static void main(String[] args) {
-        FilterSearch filterSearch = new FilterSearch(null,null,null,null,null);
+        FilterSearch filterSearch = new FilterSearch("fuck",null,null,null,null);
         System.out.println(getAvailableVehiclesQuery(filterSearch));
+    }
+
+    private static String makeStringSql(String string){
+        return "'" + string + "'";
     }
 
     private void rollbackConnection() {

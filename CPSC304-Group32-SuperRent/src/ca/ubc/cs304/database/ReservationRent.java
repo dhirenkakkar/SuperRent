@@ -89,6 +89,7 @@ public class ReservationRent {
 
         reservations.setCellphone(customer.getCellphone());
         reservations.setVid(v.getVid());
+        reservations.setVtname(v.getVtname());
         reservations.setFromDateTime(filterSearch.getFromDate());
         reservations.setToDateTime(filterSearch.getToDate());
         rm.insertReservation(reservations);
@@ -157,7 +158,7 @@ public class ReservationRent {
     private ArrayList<Integer> numWDH(Timestamp t1, Timestamp t2){
         int diffYear = t2.getYear() - t1.getYear();
         int diffMonth = t2.getMonth() - t1.getMonth();
-        int diffDate = t2.getNanos() - t1.getDate();
+        int diffDate = t2.getDate() - t1.getDate();
         int diffH = t2.getHours() - t1.getHours();
         int diffM = t2.getMinutes() - t1.getMinutes();
         int diffS = t2.getSeconds() - t1.getSeconds();

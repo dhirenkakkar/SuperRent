@@ -1,21 +1,36 @@
 package ca.ubc.cs304.controller;
 
+import ca.ubc.cs304.database.AvailableVehicles;
 import ca.ubc.cs304.database.DatabaseConnectionHandler;
-import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.database.ReservationRent;
+import ca.ubc.cs304.delegates.ClerkWindowDelegate;
+import ca.ubc.cs304.delegates.CustomerWindowDelegate;
+import ca.ubc.cs304.delegates.LoginWindowDelegate;
+import ca.ubc.cs304.model.*;
+import ca.ubc.cs304.ui.Gui;
 import ca.ubc.cs304.ui.LoginWindow;
 import ca.ubc.cs304.ui.TerminalTransactions;
+import javafx.util.Pair;
 
-public class SuperRent {
+import javax.swing.*;
+import java.util.ArrayList;
+
+public class SuperRent implements LoginWindowDelegate, ClerkWindowDelegate, CustomerWindowDelegate {
+
     private DatabaseConnectionHandler dbHandler = null;
     private LoginWindow loginWindow = null;
+    private SuperRent instance = null;
+    private ReservationRent reservationRent;
 
-    public Bank() {
+    public SuperRent() {
         dbHandler = new DatabaseConnectionHandler();
+        instance = this;
     }
 
     private void start() {
-        loginWindow = new LoginWindow();
-        loginWindow.showFrame(this);
+//        loginWindow = new LoginWindow();
+//        loginWindow.showFrame(this);
+        login("ora_samiri98", "a43602671");
     }
 
     /**
@@ -25,16 +40,21 @@ public class SuperRent {
      */
     public void login(String username, String password) {
         boolean didConnect = dbHandler.login(username, password);
-
         if (didConnect) {
             // Once connected, remove login window and start text transaction flow
-            loginWindow.dispose();
+            //loginWindow.dispose();
 
-            TerminalTransactions transaction = new TerminalTransactions();
-            transaction.showMainMenu(this);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    // Create an instance of the demo.
+                    Gui gui = new Gui(instance,instance);
+                    // Make the demo visible on the screen.
+                    gui.setVisible(true);
+                }
+            });
         } else {
             loginWindow.handleLoginFailed();
-
             if (loginWindow.hasReachedMaxLoginAttempts()) {
                 loginWindow.dispose();
                 System.out.println("You have exceeded your number of allowed attempts");
@@ -43,82 +63,30 @@ public class SuperRent {
         }
     }
 
-    /**
-     * TermainalTransactionsDelegate Implementation
-     *
-     * Insert a branch with the given info
-     */
-    public void insertBranch(BranchModel model) {
-        dbHandler.insertBranch(model);
+    @Override
+    public ArrayList<Vehicle> search(FilterSearch filterSearch) {
+        AvailableVehicles availableVehicles = new AvailableVehicles(dbHandler.getConnection(), filterSearch);
+        ArrayList<Vehicle> vehicles =  availableVehicles.getNumAvailable();
+        return vehicles;
     }
 
-    /**
-     * TermainalTransactionsDelegate Implementation
-     *
-     * Delete branch with given branch ID.
-     */
-    public void deleteBranch(int branchId) {
-        dbHandler.deleteBranch(branchId);
-    }
-
-    /**
-     * TermainalTransactionsDelegate Implementation
-     *
-     * Update the branch name for a specific ID
-     */
-
-    public void updateBranch(int branchId, String name) {
-        dbHandler.updateBranch(branchId, name);
-    }
-
-    /**
-     * TermainalTransactionsDelegate Implementation
-     *
-     * Displays information about varies bank branches.
-     */
-    public void showBranch() {
-        BranchModel[] models = dbHandler.getBranchInfo();
-
-        for (int i = 0; i < models.length; i++) {
-            BranchModel model = models[i];
-
-            // simplified output formatting; truncation may occur
-            System.out.printf("%-10.10s", model.getId());
-            System.out.printf("%-20.20s", model.getName());
-            if (model.getAddress() == null) {
-                System.out.printf("%-20.20s", " ");
-            } else {
-                System.out.printf("%-20.20s", model.getAddress());
-            }
-            System.out.printf("%-15.15s", model.getCity());
-            if (model.getPhoneNumber() == 0) {
-                System.out.printf("%-15.15s", " ");
-            } else {
-                System.out.printf("%-15.15s", model.getPhoneNumber());
-            }
-
-            System.out.println();
-        }
-    }
-
-    /**
-     * TerminalTransactionsDelegate Implementation
-     *
-     * The TerminalTransaction instance tells us that it is done with what it's
-     * doing so we are cleaning up the connection since it's no longer needed.
-     */
-    public void terminalTransactionsFinished() {
-        dbHandler.close();
-        dbHandler = null;
-
-        System.exit(0);
+    @Override
+    public float costForReservation(FilterSearch filterSearch) {
+        reservationRent = new ReservationRent(dbHandler.getConnection(), filterSearch);
+        return reservationRent.getCost();
     }
 
     /**
      * Main method called at launch time
      */
     public static void main(String args[]) {
-        Bank bank = new Bank();
-        bank.start();
+        SuperRent superRent = new SuperRent();
+        superRent.start();
+    }
+
+    @Override
+    public Reservations reserve(Customers customer) {
+        Pair<Reservations,Vehicle> reservationsVehiclePair =  reservationRent.makeReservation(customer);
+        return reservationsVehiclePair.getKey();
     }
 }
