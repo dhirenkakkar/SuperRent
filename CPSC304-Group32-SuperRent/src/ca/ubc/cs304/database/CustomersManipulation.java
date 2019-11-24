@@ -53,7 +53,7 @@ public class CustomersManipulation {
         }
     }
 
-    public void updateCustomer(String dlicense, Customers newCustomer) {
+    public void updateCustomer(Customers newCustomer) {
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE CUSTOMERS SET CELLPHONE = ?, NAME = ?, ADDRESS = ?, DLICENSE = ? WHERE  DLICENSE = ?");
             if(newCustomer.getCellphone() == -1) {
@@ -65,7 +65,7 @@ public class CustomersManipulation {
             ps.setString(2, newCustomer.getName());
             ps.setString(3, newCustomer.getAddress());
             ps.setString(4, newCustomer.getDlicense());
-            ps.setString(5, dlicense);
+            ps.setString(5, newCustomer.getDlicense());
 
             ps.executeUpdate();
             connection.commit();

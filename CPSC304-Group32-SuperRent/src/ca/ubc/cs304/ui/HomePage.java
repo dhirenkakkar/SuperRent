@@ -2,7 +2,7 @@ package ca.ubc.cs304.ui;
 
 import javax.swing.*;
 
-public class HomePage extends JPanel {
+public class HomePage extends JPanel implements PageUI{
 
     private JButton customer, clerk;
 
@@ -24,5 +24,15 @@ public class HomePage extends JPanel {
 
     public JButton getClerk() {
         return clerk;
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void end() {
+
     }
 }

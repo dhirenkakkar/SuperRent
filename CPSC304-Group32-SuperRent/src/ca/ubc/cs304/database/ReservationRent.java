@@ -50,7 +50,7 @@ public class ReservationRent {
         return false;
     }
 
-    private Pair<Rentals,Vehicle> rent(CustomerRentInfo customerRentInfo, Reservations reservations){
+    public Pair<Rentals,Vehicle> rent(CustomerRentInfo customerRentInfo, Reservations reservations){
 //        loginSignup(customer);
 //        Pair<Reservations,Vehicle> reservationsCustomersPair =  reserve(customer);
         VehiclesManipulation vehiclesManipulation = new VehiclesManipulation(this.connection);
@@ -84,7 +84,7 @@ public class ReservationRent {
 
         Vehicle v = vehicles.get(0);
         v.setStatus("Rent");
-        vm.updateVehicle(v.getVid(),v);
+        vm.updateVehicle(v);
         vehicles.remove(0);
 
         reservations.setCellphone(customer.getCellphone());
@@ -94,7 +94,10 @@ public class ReservationRent {
         reservations.setToDateTime(filterSearch.getToDate());
         rm.insertReservation(reservations);
 
-        return new Pair<>(reservations,v);
+        ClerkTransactions clerkTransactions = new ClerkTransactions(connection,filterSearch);
+        Reservations reservationsTemp = clerkTransactions.getReservationByCellphone(customer.getCellphone());
+
+        return new Pair<>(reservationsTemp,v);
     }
 
 

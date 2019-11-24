@@ -2,7 +2,7 @@ package ca.ubc.cs304.ui;
 
 import javax.swing.*;
 
-public class ReturnVehiclePage extends JPanel {
+public class ReturnVehiclePage extends JPanel implements PageUI{
     JButton home;
 
     public ReturnVehiclePage(){
@@ -16,5 +16,15 @@ public class ReturnVehiclePage extends JPanel {
 
     public JButton getHome() {
         return home;
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void end() {
+
     }
 }

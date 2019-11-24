@@ -125,6 +125,24 @@ public class StringUtils {
         return data;
     }
 
+    public static String[][] getReservationRentReceiptInArray(ArrayList<ReservationRentReciept> reservationRentReciepts){
+        String [][] data =  new String[reservationRentReciepts.size()][10];
+        for(int i = 0; i < reservationRentReciepts.size(); i++){
+            ReservationRentReciept reservationRentReciept = reservationRentReciepts.get(i);
+            ArrayList<String> row = new ArrayList<>();
+
+            row.add(check(reservationRentReciept.getConfNo()));
+            row.add(check(reservationRentReciept.getVtname()));
+            row.add(check(reservationRentReciept.getCellphone()));
+            row.add(check(reservationRentReciept.getFromDateTime()));
+            row.add(check(reservationRentReciept.getToDateTime()));
+            row.add(check(reservationRentReciept.getLocation()));
+            row.add(check(reservationRentReciept.getCity()));
+            row.toArray(data[i]);
+        }
+        return data;
+    }
+
     public static String[][] getReturnsInArray(ArrayList<Returns> returns){
         String [][] data =  new String[returns.size()][10];
         for(int i = 0; i < returns.size(); i++){

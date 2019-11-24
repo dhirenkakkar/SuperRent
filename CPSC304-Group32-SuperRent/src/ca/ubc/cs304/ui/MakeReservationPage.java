@@ -1,21 +1,16 @@
 package ca.ubc.cs304.ui;
 
-import ca.ubc.cs304.model.Customers;
-import ca.ubc.cs304.model.FilterSearch;
-import ca.ubc.cs304.model.Reservations;
-import ca.ubc.cs304.model.Vehicle;
+import ca.ubc.cs304.model.*;
 import ca.ubc.cs304.utils.StringUtils;
 import com.github.lgooddatepicker.components.DateTimePicker;
 import com.github.lgooddatepicker.zinternaltools.JIntegerTextField;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
-public class MakeReservationPage extends JPanel {
+public class MakeReservationPage extends JPanel implements PageUI{
     MakeReservationPage instace = null;
 
     private JFrame parent = null;
@@ -163,12 +158,12 @@ public class MakeReservationPage extends JPanel {
         this.vehicles = vehicles;
     }
 
-    private void showReservationReciept(Reservations reservation){
+    private void showReservationReciept(ReservationRentReciept reservationRentReciept){
 
-        String [] cols = {"confNo", "vtname", "vid", "year", "cellphone","from date and time", "to date and time", "vtname", "location", "city"};
-        ArrayList<Reservations> reservations = new ArrayList<>();
-        reservations.add(reservation);
-        String [][] data = StringUtils.getReservationsInArray(reservations);
+        String [] cols = {"confNo", "vtname", "cellphone","from date and time", "to date and time", "location", "city"};
+        ArrayList<ReservationRentReciept> reservationRentReciepts = new ArrayList<>();
+        reservationRentReciepts.add(reservationRentReciept);
+        String [][] data = StringUtils.getReservationRentReceiptInArray(reservationRentReciepts);
         jTable = new JTable(data, cols);
         jTable.setFocusable(false);
         avTable = new JScrollPane(jTable);
@@ -259,6 +254,7 @@ public class MakeReservationPage extends JPanel {
     }
 
     public void showCost(float costValue) {
+        cleanUp();
         if(cost != null){
             remove(cost);
         }
@@ -269,6 +265,7 @@ public class MakeReservationPage extends JPanel {
         cost.add(estimatedCost);
         cost.add(ecValue);
         cost.add(proceedReserve);
+        cost.add(cancel);
         cost.setVisible(true);
         add(cost);
         setVisible(true);
@@ -331,9 +328,9 @@ public class MakeReservationPage extends JPanel {
         return cancel;
     }
 
-    public void showReservation(Reservations reservation){
+    public void showReservation(ReservationRentReciept reservationRentReciept){
         customerInfoP.setVisible(false);
-        showReservationReciept(reservation);
+        showReservationReciept(reservationRentReciept);
     }
 
     public void showErrorMessage(String err){
@@ -344,5 +341,15 @@ public class MakeReservationPage extends JPanel {
         add(message);
         setVisible(true);
         parent.setVisible(true);
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void end() {
+        cleanUp();
     }
 }

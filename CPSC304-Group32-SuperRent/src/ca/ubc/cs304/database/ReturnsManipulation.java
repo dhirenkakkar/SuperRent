@@ -64,7 +64,7 @@ public class ReturnsManipulation {
         }
     }
 
-    public void updateReturns(int rid, Returns newReturns) {
+    public void updateReturns(Returns newReturns) {
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE RETURNS SET RID = ?, RDATE = ?, ODOMETER = ?, FULLTANK = ? WHERE  RID = ?");
             if(newReturns.getRid() == -1) {
@@ -84,7 +84,7 @@ public class ReturnsManipulation {
             ps.setString(4,newReturns.getFulltank());
             ps.setTimestamp(2, newReturns.getRdate());
 
-            ps.setInt(5,rid);
+            ps.setInt(5,newReturns.getRid());
 
             ps.executeUpdate();
             connection.commit();

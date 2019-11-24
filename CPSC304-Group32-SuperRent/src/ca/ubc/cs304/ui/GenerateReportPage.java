@@ -2,7 +2,7 @@ package ca.ubc.cs304.ui;
 
 import javax.swing.*;
 
-public class GenerateReportPage extends JPanel {
+public class GenerateReportPage extends JPanel implements PageUI{
     JButton home;
 
     public GenerateReportPage(){
@@ -19,4 +19,13 @@ public class GenerateReportPage extends JPanel {
     }
 
 
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void end() {
+
+    }
 }

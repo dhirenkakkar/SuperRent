@@ -24,13 +24,13 @@ public class ClerkTransactions {
     }
 
 
-    private Reservations getReservationByCellphone(int cellphone, int vid){
+    public Reservations getReservationByCellphone(int cellphone){
         Reservations reservation = null;
         try {
-            PreparedStatement ps = connection.prepareStatement(" SELECT * FROM RESERVATIONS WHERE FROMDATE = ?, TODATE = ?, VID = ?, CELLPHONE = ?");
+            PreparedStatement ps = connection.prepareStatement(" SELECT * FROM RESERVATIONS WHERE FROMDATETIME = ? AND  TODATETIME = ? AND VTNAME = ? AND CELLPHONE = ?");
             ps.setTimestamp(1,filterSearch.getFromDate());
             ps.setTimestamp(2,filterSearch.getToDate());
-            ps.setInt(3, vid);
+            ps.setString(3, filterSearch.getVtname());
             ps.setInt(4,cellphone);
             ResultSet rs = ps.executeQuery();
             connection.commit();
@@ -62,7 +62,7 @@ public class ClerkTransactions {
         return reservation;
     }
 
-    private Reservations getReservationByConfNo(int confNo){
+    public Reservations getReservationByConfNo(int confNo){
         Reservations reservation = null;
         try {
             PreparedStatement ps = connection.prepareStatement(" SELECT * FROM RESERVATIONS R1 where R1.CONFNO = ?");

@@ -97,7 +97,7 @@ public class VehicleTypesManipulation {
         }
     }
 
-    public void updateVehicleTypes(String vtname, VehicleTypes vehicleTypes) {
+    public void updateVehicleTypes(VehicleTypes vehicleTypes) {
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE VEHICLETYPES SET VTNAME = ?, FEATURES = ?, WRATE = ?, DRATE = ?, HRATE = ?, WIRATE = ?, DIRATE = ?, HIRATE = ?, KRATE = ? WHERE  VTNAME = ?");
 
@@ -153,7 +153,7 @@ public class VehicleTypesManipulation {
                 ps.setFloat(9, vehicleTypes.getKrate());
             }
 
-            ps.setString(10, vtname);
+            ps.setString(10, vehicleTypes.getVtname());
 
             ps.executeUpdate();
             connection.commit();

@@ -1,22 +1,24 @@
 package ca.ubc.cs304.ui;
 
-import ca.ubc.cs304.model.Customers;
-import ca.ubc.cs304.model.FilterSearch;
-import ca.ubc.cs304.model.Reservations;
-import ca.ubc.cs304.model.Vehicle;
+import ca.ubc.cs304.model.*;
 import ca.ubc.cs304.utils.StringUtils;
+import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DateTimePicker;
 import com.github.lgooddatepicker.zinternaltools.JIntegerTextField;
+import javafx.util.Pair;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class RentPage extends JPanel {
+public class RentPage extends JPanel implements PageUI{
     RentPage instace = null;
 
+    private Reservations reservation = null;
+
     private JFrame parent = null;
+    private JFrame child2;
 
     private JLabel vtname;
     private JLabel city;
@@ -40,7 +42,7 @@ public class RentPage extends JPanel {
     private DateTimePicker fromDateTime;
     private DateTimePicker toDateTime;
 
-    private JFrame child;
+    private JPanel child;
     private JScrollPane avTable;
     private JButton back;
     private JTable jTable;
@@ -56,9 +58,25 @@ public class RentPage extends JPanel {
     private JTextField dlicenseText;
 
     private JButton submit;
+    private JButton rent;
     private JButton cancel;
 
     private JLabel message;
+
+    private JLabel cncp;
+    private JTextField cncpText;
+    private JComboBox<String> cncpCb;
+    private JButton rentWithoutRes;
+    private String cellphone = null;
+    private JButton proceedRent;
+
+    private JLabel cardNameView;
+    private JLabel cardNoView;
+    private JLabel expDateView;
+
+    private JTextField cardNameText;
+    private JTextField cardNoText;
+    private DatePicker expDateDate;
 
 
     ArrayList<Vehicle> vehicles;
@@ -72,49 +90,74 @@ public class RentPage extends JPanel {
 
     private void setupRentPage() {
 
+        cncp = new JLabel("Confirmation # or Cellphone #");
+        cncpText = new JIntegerTextField();
+        String [] cncpCbChoices = {"confNo", "cellphone"};
+        cncpCb = new JComboBox<>(cncpCbChoices);
+
+        add(cncp);
+        add(cncpText);
+        add(cncpCb);
+
         vtname = new JLabel("Vehicle Type");
         vtname.setVisible(true);
-        add(vtname);
+
 
         String[] vehicleTypeChoices = { "","Economy","Compact", "Midsize","Standard","Fullsize","SUV", "Truck"};
         vtnameCB = new JComboBox<String>(vehicleTypeChoices);
         vtnameCB.setVisible(true);
-        add(vtnameCB);
+
+
 
         city = new JLabel("City");
         city.setVisible(true);
-        add(city);
+
 
         String[] cityChoices = { "","California","Vancouver", "Toronto"};
         cityCB = new JComboBox<String>(cityChoices);
         cityCB.setVisible(true);
-        add(cityCB);
+
 
         location = new JLabel("Location");
         location.setVisible(true);
-        add(location);
+
 
         String[] locationChoices = { "","Downtown", "Uptown"};
         locationCB = new JComboBox<String>(locationChoices);
         locationCB.setVisible(true);
-        add(locationCB);
+
 
         search = new JButton("Search");
-        add(search);
+
 
         home = new JButton("Home");
         add(home);
 
         // Create a DateTimePicker. (But don't add it to the form).
         fromDateTime = new DateTimePicker();
-        add(fromDateTime);
+
 
         toDateTime = new DateTimePicker();
-        add(toDateTime);
 
         proceedReserve = new JButton("Proceed to Reservation");
         submit = new JButton("Submit");
         cancel = new JButton("Cancel");
+        rentWithoutRes = new JButton("Rent without reservation");
+        proceedRent = new JButton("Proceed to Rent");
+
+        cardNameView = new JLabel("Cardholder Name");
+        cardNoView = new JLabel("Card #");
+        expDateView = new JLabel("Exp Date");
+
+        cardNameText = new JTextField(10);
+        cardNoText = new JIntegerTextField();
+        expDateDate = new DatePicker();
+        rent = new JButton("Rent");
+
+
+        add(submit);
+        add(rentWithoutRes);
+
 
 
         this.setVisible(true);
@@ -161,12 +204,12 @@ public class RentPage extends JPanel {
         this.vehicles = vehicles;
     }
 
-    private void showReservationReciept(Reservations reservation){
+    private void showReservationReciept(ReservationRentReciept reservationRentReciept){
 
-        String [] cols = {"confNo", "vtname", "vid", "year", "cellphone","from date and time", "to date and time", "vtname", "location", "city"};
-        ArrayList<Reservations> reservations = new ArrayList<>();
-        reservations.add(reservation);
-        String [][] data = StringUtils.getReservationsInArray(reservations);
+        String [] cols = {"confNo", "vtname", "cellphone","from date and time", "to date and time", "location", "city"};
+        ArrayList<ReservationRentReciept> reservationRentReciepts = new ArrayList<>();
+        reservationRentReciepts.add(reservationRentReciept);
+        String [][] data = StringUtils.getReservationRentReceiptInArray(reservationRentReciepts);
         jTable = new JTable(data, cols);
         jTable.setFocusable(false);
         avTable = new JScrollPane(jTable);
@@ -242,6 +285,10 @@ public class RentPage extends JPanel {
     }
 
     public void cleanUp(){
+        if(child != null){
+            remove(child);
+        }
+
         if(noAV != null){
             remove(noAV);
         }
@@ -266,7 +313,7 @@ public class RentPage extends JPanel {
         JLabel ecValue = new JLabel("" + costValue);
         cost.add(estimatedCost);
         cost.add(ecValue);
-        cost.add(proceedReserve);
+        cost.add(proceedRent);
         cost.setVisible(true);
         add(cost);
         setVisible(true);
@@ -291,19 +338,27 @@ public class RentPage extends JPanel {
 
         cellphoneText = new JIntegerTextField();
         nameText = new JTextField(20);
-//        nameText.setPreferredSize(new Dimension(10,5));
         addressText = new JTextField(20);
         dlicenseText = new JTextField(20);
 
-        customerInfoP.add(cellphoneView);
-        customerInfoP.add(cellphoneText);
-        customerInfoP.add(nameView);
-        customerInfoP.add(nameText);
-        customerInfoP.add(addressView);
-        customerInfoP.add(addressText);
-        customerInfoP.add(dlicenseView);
-        customerInfoP.add(dlicenseText);
-        customerInfoP.add(submit);
+        if(cellphone == null){
+            customerInfoP.add(cellphoneView);
+            customerInfoP.add(cellphoneText);
+            customerInfoP.add(nameView);
+            customerInfoP.add(nameText);
+            customerInfoP.add(addressView);
+            customerInfoP.add(addressText);
+            customerInfoP.add(dlicenseView);
+            customerInfoP.add(dlicenseText);
+        }
+
+        customerInfoP.add(cardNameView);
+        customerInfoP.add(cardNameText);
+        customerInfoP.add(cardNoView);
+        customerInfoP.add(cardNoText);
+        customerInfoP.add(expDateView);
+        customerInfoP.add(expDateDate);
+        customerInfoP.add(rent);
 
         customerInfo.add(customerInfoP);
         customerInfo.setVisible(true);
@@ -311,8 +366,12 @@ public class RentPage extends JPanel {
 
     }
 
-    public Customers getCustomerInfo(){
-        return new Customers(Integer.parseInt(cellphoneText.getText()),nameText.getText(), addressText.getText(),dlicenseText.getText());
+    public Pair<Customers, CustomerRentInfo> getCustomerInfo(){
+
+        Customers customers =  new Customers(Integer.parseInt(cellphoneText.getText()),nameText.getText(), addressText.getText(),dlicenseText.getText());
+        System.out.println(expDateDate.toString());
+        CustomerRentInfo customerRentInfo = new CustomerRentInfo(cardNameText.getText(), Integer.parseInt(cardNoText.getText()),StringUtils.formatString(expDateDate.toString()+"T00:00"));
+        return new Pair<>(customers,customerRentInfo);
     }
 
     public JButton getSubmit() {
@@ -329,7 +388,7 @@ public class RentPage extends JPanel {
         return cancel;
     }
 
-    public void showReservation(Reservations reservation){
+    public void showRent(ReservationRentReciept reservation){
         customerInfoP.setVisible(false);
         showReservationReciept(reservation);
     }
@@ -342,5 +401,101 @@ public class RentPage extends JPanel {
         add(message);
         setVisible(true);
         parent.setVisible(true);
+    }
+
+    public void startup(){
+        if(cncp != null){
+            cncp.setVisible(true);
+        }
+        if(cncpText != null){
+            cncpText.setVisible(true);
+        }
+        if(cncpCb != null){
+            cncpCb.setVisible(true);
+        }
+        setVisible(true);
+        parent.setVisible(true);
+    }
+
+    public JButton getRentWithoutRes() {
+        return rentWithoutRes;
+    }
+
+    public void showFilter() {
+        cncp.setVisible(false);
+        cncpText.setVisible(false);
+        cncpCb.setVisible(false);
+        submit.setVisible(false);
+        rentWithoutRes.setVisible(false);
+        cleanUp();
+
+        child = new JPanel();
+        child.add(vtname);
+        child.add(vtnameCB);
+        child.add(city);
+        child.add(cityCB);
+        child.add(location);
+        child.add(locationCB);
+        child.add(fromDateTime);
+        child.add(toDateTime);
+        child.add(search);
+
+        add(child);
+        setVisible(true);
+        parent.setVisible(true);
+    }
+
+    @Override
+    public void start() {
+        if(cncp != null){
+            cncp.setVisible(true);
+        }
+        if(cncpText != null){
+            cncpText.setVisible(true);
+        }
+        if(cncpCb != null){
+            cncpCb.setVisible(true);
+        }
+        if(rentWithoutRes != null){
+            rentWithoutRes.setVisible(true);
+        }
+    }
+
+    @Override
+    public void end() {
+        cleanUp();
+    }
+
+    public JTextField getCncpText() {
+        return cncpText;
+    }
+
+    public JComboBox<String> getCncpCb() {
+        return cncpCb;
+    }
+
+    public void showFilter(String text) {
+        cellphone = text;
+        showFilter();
+    }
+
+    public JButton getProceedRent() {
+        return proceedRent;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public Reservations getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(Reservations reservation) {
+        this.reservation = reservation;
+    }
+
+    public JButton getRent() {
+        return rent;
     }
 }

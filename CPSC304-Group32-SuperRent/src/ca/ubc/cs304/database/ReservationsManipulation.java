@@ -63,9 +63,9 @@ public class ReservationsManipulation {
         }
     }
 
-    public void updateReservation(int confNo, Reservations newReservations) {
+    public void updateReservation(Reservations newReservations) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE RESERVATIONS SET CONFNO = ?, VTNAME = ?, VID = ?, CELLPHONE = ?, FROMDATE = ?, TODATE = ? WHERE  CONFNO = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE RESERVATIONS SET CONFNO = ?, VTNAME = ?, VID = ?, CELLPHONE = ?, FROMDATETIME = ?, TODATETIME = ? WHERE  CONFNO = ?");
             if(newReservations.getCellphone() == -1) {
                 ps.setNull(4,java.sql.Types.INTEGER);
             }
@@ -92,7 +92,7 @@ public class ReservationsManipulation {
             ps.setTimestamp(6,newReservations.getToDateTime());
 
 
-            ps.setInt(7, confNo);
+            ps.setInt(7, newReservations.getConfNo());
 
             ps.executeUpdate();
             connection.commit();

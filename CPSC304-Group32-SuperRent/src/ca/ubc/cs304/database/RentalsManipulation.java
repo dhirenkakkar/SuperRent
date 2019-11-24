@@ -84,7 +84,7 @@ public class RentalsManipulation {
         }
     }
 
-    public void updateRentals(int rid, Rentals newRental) {
+    public void updateRentals(Rentals newRental) {
         try {
                 PreparedStatement ps = connection.prepareStatement("UPDATE RENTALS SET RID = ?, VID = ?, CELLPHONE = ?, FROMDATE = ?, TODATE = ?, ODOMETER = ?, CARDNAME = ?, CARDNO = ?, EXPDATE = ?, CONFNO = ? WHERE  RID = ?");
             if(newRental.getCellphone() == -1) {
@@ -134,7 +134,7 @@ public class RentalsManipulation {
             ps.setTimestamp(5,newRental.getToDateTime());
             ps.setTimestamp(9,newRental.getExpDate());
 
-            ps.setInt(11, rid);
+            ps.setInt(11, newRental.getRid());
 
             ps.executeUpdate();
             connection.commit();

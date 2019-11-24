@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-public class ViewAvailableVehiclesPage extends JPanel{
+public class ViewAvailableVehiclesPage extends JPanel implements PageUI{
 
     ViewAvailableVehiclesPage instace = null;
 
@@ -227,4 +227,13 @@ public class ViewAvailableVehiclesPage extends JPanel{
         }
     }
 
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void end() {
+        cleanUp();
+    }
 }

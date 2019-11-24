@@ -2,10 +2,8 @@ package ca.ubc.cs304.ui;
 
 import ca.ubc.cs304.delegates.ClerkWindowDelegate;
 import ca.ubc.cs304.delegates.CustomerWindowDelegate;
-import ca.ubc.cs304.model.Customers;
-import ca.ubc.cs304.model.FilterSearch;
-import ca.ubc.cs304.model.Reservations;
-import ca.ubc.cs304.model.Vehicle;
+import ca.ubc.cs304.model.*;
+import javafx.util.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,6 +74,7 @@ public class Gui extends JFrame{
         homePage.getCustomer().addActionListener(customerActionListener);
     }
 
+
     private void setupClerkPage() {
         clerkPage = new ClerkPage();
 
@@ -106,9 +105,96 @@ public class Gui extends JFrame{
         makeReservationPage.getCancel().addActionListener(cancelReserveActionListener);
     }
     private void setupRentPage() {
-        rentPage = new RentPage();
+        rentPage = new RentPage(this);
         rentPage.getHome().addActionListener(homeActionListener);
+        rentPage.getHome().addActionListener(homeActionListener);
+        rentPage.getSearch().addActionListener(searchForRentActionListener);
+        rentPage.getProceedReserve().addActionListener(proceedReserveActionListener);
+        rentPage.getSubmit().addActionListener(submitRentActionListener);
+        rentPage.getCancel().addActionListener(cancelReserveActionListener);
+        rentPage.getRentWithoutRes().addActionListener(rentWithoutResActionListener);
+        rentPage.getProceedRent().addActionListener(getProceedRentActionListener);
+        rentPage.getRent().addActionListener(rentingActionListener);
     }
+
+    private ActionListener rentingActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            Reservations reservation = rentPage.getReservation();
+            Pair<Customers, CustomerRentInfo> customerRentInfoPair = rentPage.getCustomerInfo();
+            ReservationRentReciept reservationRentReciept = null;
+            if(reservation != null){
+                reservationRentReciept = clerkWindowDelegate.rentWithReservation(customerRentInfoPair.getValue(),rentPage.getReservation());
+            }
+            else{
+                reservationRentReciept = clerkWindowDelegate.rentWithoutReservation(customerRentInfoPair.getKey(),customerRentInfoPair.getValue());
+            }
+            if(reservationRentReciept != null){
+                rentPage.showRent(reservationRentReciept);
+            }
+        }
+    };
+
+    private ActionListener getProceedRentActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+
+            rentPage.customerInfoView();
+        }
+    };
+
+    private ActionListener rentWithoutResActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+
+            rentPage.showFilter();
+        }
+    };
+
+    private ActionListener searchForRentActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            FilterSearch filterSearch = rentPage.getFilterSearch();
+            if(filterSearch == null){
+                return;
+            }
+            if(rentPage.getCellphone() != null){
+                Reservations reservation = clerkWindowDelegate.searchForReservation(Integer.parseInt(rentPage.getCellphone()), filterSearch);
+                if(reservation == null){
+                    rentPage.showErrorMessage("No such reservation");
+                }
+                rentPage.setReservation(reservation);
+                rentPage.customerInfoView();
+            }
+            else{
+                float cost= clerkWindowDelegate.costForRent(filterSearch);
+                if(cost == -1){
+                    rentPage.showNoAvailableVehicle();
+                }
+                else {
+                    rentPage.showCost(cost);
+                }
+            }
+        }
+    };
+
+    private ActionListener submitRentActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            if(rentPage.getCncpCb().getSelectedItem().toString().equals("Cellphone")){
+                rentPage.showFilter(rentPage.getCncpText().getText());
+            }
+            else {
+                Reservations reservation = clerkWindowDelegate.searchForReservation(Integer.parseInt(rentPage.getCncpText().getText()));
+                if(reservation == null){
+                    rentPage.showErrorMessage("No such reservation");
+                }
+                rentPage.setReservation(reservation);
+                rentPage.customerInfoView();
+            }
+
+        }
+    };
 
     private void setupreturnVehiclePage() {
         returnVehiclePage = new ReturnVehiclePage();
@@ -147,8 +233,8 @@ public class Gui extends JFrame{
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             Customers customer = makeReservationPage.getCustomerInfo();
-            Reservations reservation = customerWindowDelegate.reserve(customer);
-            makeReservationPage.showReservation(reservation);
+            ReservationRentReciept reservationRentReciept = customerWindowDelegate.reserve(customer);
+            makeReservationPage.showReservation(reservationRentReciept);
 
         }
     };
@@ -164,6 +250,8 @@ public class Gui extends JFrame{
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             makeReservationPage.cancelReservation();
+            switchContentPane(homePage);
+            switchPageUi(makeReservationPage,homePage);
         }
     };
 
@@ -171,6 +259,7 @@ public class Gui extends JFrame{
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             switchContentPane(clerkPage);
+            switchPageUi(homePage,clerkPage);
         }
     };
 
@@ -178,6 +267,7 @@ public class Gui extends JFrame{
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             switchContentPane(customerPage);
+            switchPageUi(homePage,customerPage);
         }
     };
 
@@ -185,6 +275,7 @@ public class Gui extends JFrame{
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             switchContentPane(viewAvailableVehiclesPage);
+            switchPageUi(customerPage,viewAvailableVehiclesPage);
         }
     };
 
@@ -192,6 +283,7 @@ public class Gui extends JFrame{
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             switchContentPane(makeReservationPage);
+            switchPageUi(customerPage,makeReservationPage);
         }
     };
 
@@ -199,6 +291,7 @@ public class Gui extends JFrame{
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             switchContentPane(rentPage);
+            switchPageUi(clerkPage,rentPage);
         }
     };
 
@@ -206,6 +299,7 @@ public class Gui extends JFrame{
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             switchContentPane(returnVehiclePage);
+            switchPageUi(clerkPage,returnVehiclePage);
         }
     };
 
@@ -214,6 +308,7 @@ public class Gui extends JFrame{
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             switchContentPane(generateReportPage);
+            switchPageUi(clerkPage,generateReportPage);
         }
     };
 
@@ -221,6 +316,13 @@ public class Gui extends JFrame{
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             switchContentPane(homePage);
+            switchPageUi(clerkPage,homePage);
+            switchPageUi(customerPage,homePage);
+            switchPageUi(viewAvailableVehiclesPage,homePage);
+            switchPageUi(makeReservationPage,homePage);
+            switchPageUi(rentPage,homePage);
+            switchPageUi(returnVehiclePage,homePage);
+            switchPageUi(generateReportPage,homePage);
         }
     };
 
@@ -263,10 +365,13 @@ public class Gui extends JFrame{
     }
 
     private void switchContentPane(JPanel newContentPane){
-        makeReservationPage.cleanUp();
-        viewAvailableVehiclesPage.cleanUp();
         setContentPane(newContentPane);
         setVisible(true);
+    }
+
+    private void switchPageUi(PageUI oldp, PageUI newp){
+        oldp.end();
+        newp.start();
     }
 
 }

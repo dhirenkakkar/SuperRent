@@ -82,7 +82,7 @@ public class VehiclesManipulation {
         }
     }
 
-    public void updateVehicle(int vid, Vehicle newVehicle) {
+    public void updateVehicle(Vehicle newVehicle) {
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE VEHICLES SET VID = ?, VLICENSE = ?, MAKE = ?, MODEL = ?, YEAR = ?, COLOR = ?, ODOMETER = ?, STATUS = ?, VTNAME = ?, LOCATION = ?, CITY = ? WHERE  VID = ?");
             if(newVehicle.getVid() == -1) {
@@ -121,7 +121,7 @@ public class VehiclesManipulation {
             ps.setString(10, newVehicle.getLocation());
             ps.setString(11,newVehicle.getCity());
 
-            ps.setInt(12, vid);
+            ps.setInt(12, newVehicle.getVid());
 
             ps.executeUpdate();
             connection.commit();
