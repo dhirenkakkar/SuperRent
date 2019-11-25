@@ -60,9 +60,9 @@ public branchReturned(date, branch){
     +
     "FROM Vehicle v, Rentals r, [Returns] rt, VehicleTypes vt"
     +
-    "WHERE (v.location = 'branch') AND (rt.rid = r.rid) AND (r.vid = v.vid) AND (rt.rdate = TO_TIMESTAMP(date, 'YYYY-MM-DD'))"
+    "WHERE (v.location = branch) AND (rt.rid = r.rid) AND (r.vid = v.vid) AND (rt.rdate = TO_TIMESTAMP(date, 'YYYY-MM-DD'))"
     +
-    "GROUP BY v.vlocation, v.vtname"
+    "GROUP BY v.location, v.vtname"
     +
     "ORDER BY v.location");
 }
