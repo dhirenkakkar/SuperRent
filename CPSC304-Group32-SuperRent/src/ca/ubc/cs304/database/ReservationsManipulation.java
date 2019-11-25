@@ -1,6 +1,7 @@
 package ca.ubc.cs304.database;
 
 import ca.ubc.cs304.model.Customers;
+import ca.ubc.cs304.model.FilterSearch;
 import ca.ubc.cs304.model.Rentals;
 import ca.ubc.cs304.model.Reservations;
 
@@ -139,6 +140,50 @@ public class ReservationsManipulation {
         }
 
         return reservations;
+    }
+
+    public Reservations viewReservation(Customers customers, FilterSearch filterSearch){
+        Reservations reservation = new Reservations();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM RESERVATIONS WHERE CELLPHONE = ? AND FROMDATETIME = ? AND TODATETIME = ?");
+
+            ps.setInt(1,customers.getCellphone());
+            ps.setTimestamp(2,filterSearch.getFromDate());
+            ps.setTimestamp(3,filterSearch.getToDate());
+
+            ResultSet rs = ps.executeQuery();
+            connection.commit();
+
+
+            while(rs.next()) {
+
+                reservation.setCellphone(rs.getInt("cellphone"));
+                if(rs.wasNull()) {
+                    reservation.setCellphone(-1);
+                }
+                reservation.setConfNo(rs.getInt("confNo"));
+                if(rs.wasNull()) {
+                    reservation.setConfNo(-1);
+                }
+                reservation.setFromDateTime(rs.getTimestamp("fromDateTime"));
+                reservation.setToDateTime(rs.getTimestamp("toDateTime"));
+
+                reservation.setVid(rs.getInt("vid"));
+                if(rs.wasNull()) {
+                    reservation.setVid(-1);
+                }
+
+            }
+
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+            reservation = null;
+        }
+
+        return reservation;
     }
 
     private void rollbackConnection() {

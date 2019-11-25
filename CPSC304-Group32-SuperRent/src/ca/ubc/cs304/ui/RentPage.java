@@ -341,7 +341,7 @@ public class RentPage extends JPanel implements PageUI{
         addressText = new JTextField(20);
         dlicenseText = new JTextField(20);
 
-        if(cellphone == null){
+        if(reservation == null){
             customerInfoP.add(cellphoneView);
             customerInfoP.add(cellphoneText);
             customerInfoP.add(nameView);
@@ -497,5 +497,9 @@ public class RentPage extends JPanel implements PageUI{
 
     public JButton getRent() {
         return rent;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
     }
 }

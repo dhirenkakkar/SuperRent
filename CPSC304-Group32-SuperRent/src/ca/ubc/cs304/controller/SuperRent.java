@@ -4,7 +4,6 @@ import ca.ubc.cs304.database.*;
 import ca.ubc.cs304.delegates.ClerkWindowDelegate;
 import ca.ubc.cs304.delegates.CustomerWindowDelegate;
 import ca.ubc.cs304.delegates.LoginWindowDelegate;
-import ca.ubc.cs304.delegates.QueryDelegate;
 import ca.ubc.cs304.model.*;
 import ca.ubc.cs304.ui.Gui;
 import ca.ubc.cs304.ui.LoginWindow;
@@ -13,7 +12,7 @@ import javafx.util.Pair;
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class SuperRent implements LoginWindowDelegate, ClerkWindowDelegate, CustomerWindowDelegate, QueryDelegate {
+public class SuperRent implements LoginWindowDelegate, ClerkWindowDelegate, CustomerWindowDelegate {
 
     private DatabaseConnectionHandler dbHandler = null;
     private LoginWindow loginWindow = null;
@@ -87,6 +86,9 @@ public class SuperRent implements LoginWindowDelegate, ClerkWindowDelegate, Cust
     @Override
     public ReservationRentReciept reserve(Customers customer) {
         Pair<Reservations,Vehicle> reservationsVehiclePair =  reservation.makeReservation(customer);
+        if(reservationsVehiclePair == null){
+            return null;
+        }
         Reservations reservations = reservationsVehiclePair.getKey();
         Vehicle vehicle = reservationsVehiclePair.getValue();
         ReservationRentReciept reservationRentReciept = new ReservationRentReciept(reservations.getConfNo(),vehicle.getVtname(),reservations.getCellphone(),reservations.getFromDateTime(),reservations.getToDateTime(),vehicle.getLocation(),vehicle.getCity());
@@ -122,112 +124,11 @@ public class SuperRent implements LoginWindowDelegate, ClerkWindowDelegate, Cust
 
     @Override
     public ReservationRentReciept rentWithReservation(CustomerRentInfo customerRentInfo, Reservations reservations) {
+        rent = new ReservationRent(dbHandler.getConnection(), null);
         Pair<Rentals,Vehicle> rentalsVehiclePair = rent.rent(customerRentInfo, reservations);
         Rentals rent = rentalsVehiclePair.getKey();
         Vehicle vehicle = rentalsVehiclePair.getValue();
         ReservationRentReciept reservationRentReciept = new ReservationRentReciept(rent.getConfNo(),vehicle.getVtname(),rent.getCellphone(),rent.getFromDateTime(),rent.getToDateTime(),vehicle.getLocation(),vehicle.getCity());
         return reservationRentReciept;
-    }
-
-    @Override
-    public void insert(String tableName, Object data) {
-        switch (tableName){
-            case "VehicleTypes":
-                VehicleTypesManipulation vehicleTypesManipulation = new VehicleTypesManipulation(dbHandler.getConnection());
-                vehicleTypesManipulation.insertVehicleTypes((VehicleTypes) data);
-                break;
-            case "Vehicles":
-                VehiclesManipulation vehiclesManipulation = new VehiclesManipulation(dbHandler.getConnection());
-                vehiclesManipulation.insertVehicle((Vehicle)data);
-                break;
-            case "Customers":
-                CustomersManipulation customersManipulation = new CustomersManipulation(dbHandler.getConnection());
-                customersManipulation.insertCustomer((Customers) data);
-                break;
-            case "Reservations":
-                ReservationsManipulation reservationsManipulation = new ReservationsManipulation(dbHandler.getConnection());
-                reservationsManipulation.insertReservation((Reservations) data);
-                break;
-            case "Rentals":
-                RentalsManipulation rentalsManipulation = new RentalsManipulation(dbHandler.getConnection());
-                rentalsManipulation.insertRentals((Rentals)data);
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void delete(String tableName, Object data) {
-        switch (tableName){
-            case "VehicleTypes":
-                VehicleTypesManipulation vehicleTypesManipulation = new VehicleTypesManipulation(dbHandler.getConnection());
-                vehicleTypesManipulation.insertVehicleTypes((VehicleTypes) data);
-                break;
-            case "Vehicles":
-                VehiclesManipulation vehiclesManipulation = new VehiclesManipulation(dbHandler.getConnection());
-                vehiclesManipulation.insertVehicle((Vehicle)data);
-                break;
-            case "Customers":
-                CustomersManipulation customersManipulation = new CustomersManipulation(dbHandler.getConnection());
-                customersManipulation.insertCustomer((Customers) data);
-                break;
-            case "Reservations":
-                ReservationsManipulation reservationsManipulation = new ReservationsManipulation(dbHandler.getConnection());
-                reservationsManipulation.insertReservation((Reservations) data);
-                break;
-            case "Rentals":
-                RentalsManipulation rentalsManipulation = new RentalsManipulation(dbHandler.getConnection());
-                rentalsManipulation.insertRentals((Rentals)data);
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void update(String tableName, Object data) {
-        switch (tableName){
-            case "VehicleTypes":
-                VehicleTypesManipulation vehicleTypesManipulation = new VehicleTypesManipulation(dbHandler.getConnection());
-                break;
-            case "Vehicles":
-                VehiclesManipulation vehiclesManipulation = new VehiclesManipulation(dbHandler.getConnection());
-                break;
-            case "Customers":
-                CustomersManipulation customersManipulation = new CustomersManipulation(dbHandler.getConnection());
-                break;
-            case "Reservations":
-                ReservationsManipulation reservationsManipulation = new ReservationsManipulation(dbHandler.getConnection());
-                break;
-            case "Rentals":
-                RentalsManipulation rentalsManipulation = new RentalsManipulation(dbHandler.getConnection());
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void viewAll(String tableName) {
-        switch (tableName){
-            case "VehicleTypes":
-                VehicleTypesManipulation vehicleTypesManipulation = new VehicleTypesManipulation(dbHandler.getConnection());
-                break;
-            case "Vehicles":
-                VehiclesManipulation vehiclesManipulation = new VehiclesManipulation(dbHandler.getConnection());
-                break;
-            case "Customers":
-                CustomersManipulation customersManipulation = new CustomersManipulation(dbHandler.getConnection());
-                break;
-            case "Reservations":
-                ReservationsManipulation reservationsManipulation = new ReservationsManipulation(dbHandler.getConnection());
-                break;
-            case "Rentals":
-                RentalsManipulation rentalsManipulation = new RentalsManipulation(dbHandler.getConnection());
-                break;
-            default:
-                break;
-        }
     }
 }

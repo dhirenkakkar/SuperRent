@@ -161,7 +161,9 @@ public class Gui extends JFrame{
             if(rentPage.getCellphone() != null){
                 Reservations reservation = clerkWindowDelegate.searchForReservation(Integer.parseInt(rentPage.getCellphone()), filterSearch);
                 if(reservation == null){
-                    rentPage.showErrorMessage("No such reservation");
+                    ErrorHandling errorHandling = new ErrorHandling();
+                    errorHandling.showError("No Reservation to Rent");
+                    return;
                 }
                 rentPage.setReservation(reservation);
                 rentPage.customerInfoView();
@@ -181,13 +183,15 @@ public class Gui extends JFrame{
     private ActionListener submitRentActionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            if(rentPage.getCncpCb().getSelectedItem().toString().equals("Cellphone")){
+            if(rentPage.getCncpCb().getSelectedItem().toString().equals("cellphone")){
                 rentPage.showFilter(rentPage.getCncpText().getText());
             }
             else {
                 Reservations reservation = clerkWindowDelegate.searchForReservation(Integer.parseInt(rentPage.getCncpText().getText()));
                 if(reservation == null){
-                    rentPage.showErrorMessage("No such reservation");
+                    ErrorHandling errorHandling = new ErrorHandling();
+                    errorHandling.showError("No such reservation");
+                    return;
                 }
                 rentPage.setReservation(reservation);
                 rentPage.customerInfoView();
@@ -234,6 +238,11 @@ public class Gui extends JFrame{
         public void actionPerformed(ActionEvent actionEvent) {
             Customers customer = makeReservationPage.getCustomerInfo();
             ReservationRentReciept reservationRentReciept = customerWindowDelegate.reserve(customer);
+            if(reservationRentReciept == null){
+                ErrorHandling errorHandling = new ErrorHandling();
+                errorHandling.showError("you already made a reservation today");
+                return;
+            }
             makeReservationPage.showReservation(reservationRentReciept);
 
         }

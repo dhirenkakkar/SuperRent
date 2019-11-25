@@ -1,6 +1,7 @@
 package ca.ubc.cs304.database;
 
 import ca.ubc.cs304.model.Customers;
+import ca.ubc.cs304.model.FilterSearch;
 import ca.ubc.cs304.model.Rentals;
 
 import java.sql.*;
@@ -191,6 +192,114 @@ public class RentalsManipulation {
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
+        }
+
+        return rentals;
+    }
+
+    public Rentals viewRentals(int confNo){
+        Rentals rentals = new Rentals();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM RENTALS WHERE CONFNO = ?");
+            ps.setInt(1,confNo);
+            ResultSet rs = ps.executeQuery();
+            connection.commit();
+
+            while(rs.next()) {
+                Rentals rental = new Rentals();
+                rental.setCardName(rs.getString("cardName"));
+                rental.setCardNo(rs.getInt("cardNo"));
+                if(rs.wasNull()) {
+                    rental.setCardNo(-1);
+                }
+                rental.setCellphone(rs.getInt("cellphone"));
+                if(rs.wasNull()) {
+                    rental.setCellphone(-1);
+                }
+                rental.setConfNo(rs.getInt("confNo"));
+                if(rs.wasNull()) {
+                    rental.setConfNo(-1);
+                }
+                rental.setExpDate(rs.getTimestamp("ExpDate"));
+                rental.setFromDateTime(rs.getTimestamp("fromDateTime"));
+                rental.setToDateTime(rs.getTimestamp("toDateTime"));
+                rental.setRid(rs.getInt("rid"));
+                if(rs.wasNull()) {
+                    rental.setRid(-1);
+                }
+                rental.setVid(rs.getInt("vid"));
+                if(rs.wasNull()) {
+                    rental.setVid(-1);
+                }
+                rental.setOdometer(rs.getFloat("odometer"));
+                if(rs.wasNull()) {
+                    rental.setOdometer(-1);
+                }
+
+            }
+
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+            rentals = null;
+        }
+
+        return rentals;
+    }
+
+    public Rentals viewRentals(int cellphone, FilterSearch filterSearch){
+        Rentals rentals = new Rentals();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM RENTALS WHERE CELLPHONE = ? AND FROMDATETIME = ? AND TODATETIME = ?");
+
+            ps.setInt(1,cellphone);
+            ps.setTimestamp(2,filterSearch.getFromDate());
+            ps.setTimestamp(3,filterSearch.getToDate());
+
+            ResultSet rs = ps.executeQuery();
+            connection.commit();
+
+            while(rs.next()) {
+                Rentals rental = new Rentals();
+                rental.setCardName(rs.getString("cardName"));
+                rental.setCardNo(rs.getInt("cardNo"));
+                if(rs.wasNull()) {
+                    rental.setCardNo(-1);
+                }
+                rental.setCellphone(rs.getInt("cellphone"));
+                if(rs.wasNull()) {
+                    rental.setCellphone(-1);
+                }
+                rental.setConfNo(rs.getInt("confNo"));
+                if(rs.wasNull()) {
+                    rental.setConfNo(-1);
+                }
+                rental.setExpDate(rs.getTimestamp("ExpDate"));
+                rental.setFromDateTime(rs.getTimestamp("fromDateTime"));
+                rental.setToDateTime(rs.getTimestamp("toDateTime"));
+                rental.setRid(rs.getInt("rid"));
+                if(rs.wasNull()) {
+                    rental.setRid(-1);
+                }
+                rental.setVid(rs.getInt("vid"));
+                if(rs.wasNull()) {
+                    rental.setVid(-1);
+                }
+                rental.setOdometer(rs.getFloat("odometer"));
+                if(rs.wasNull()) {
+                    rental.setOdometer(-1);
+                }
+
+            }
+
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+            rentals = null;
         }
 
         return rentals;

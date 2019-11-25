@@ -59,8 +59,8 @@ public class ReservationRent {
         Rentals rentals = new Rentals();
         rentals.setVid(reservations.getVid());
         rentals.setCellphone(reservations.getCellphone());
-        rentals.setFromDateTime(filterSearch.getFromDate());
-        rentals.setToDateTime(filterSearch.getToDate());
+        rentals.setFromDateTime(reservations.getFromDateTime());
+        rentals.setToDateTime(reservations.getToDateTime());
         rentals.setOdometer(vehicle.getOdometer());
         rentals.setCardNo(customerRentInfo.getCardNo());
         rentals.setCardName(customerRentInfo.getCardName());
@@ -81,6 +81,11 @@ public class ReservationRent {
         Reservations reservations = new Reservations();
         VehiclesManipulation vm = new VehiclesManipulation(this.connection);
         ReservationsManipulation rm = new ReservationsManipulation(this.connection);
+
+        Reservations reservations1 = rm.viewReservation(customer,filterSearch);
+        if(reservations1 != null){
+            return null;
+        }
 
         Vehicle v = vehicles.get(0);
         v.setStatus("Rent");

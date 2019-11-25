@@ -1,6 +1,7 @@
 package ca.ubc.cs304.database;
 
 import ca.ubc.cs304.model.FilterSearch;
+import ca.ubc.cs304.model.Rentals;
 import ca.ubc.cs304.model.Reservations;
 import ca.ubc.cs304.model.Vehicle;
 
@@ -25,7 +26,13 @@ public class ClerkTransactions {
 
 
     public Reservations getReservationByCellphone(int cellphone){
-        Reservations reservation = null;
+        Reservations reservation = new Reservations();
+        RentalsManipulation rentalsManipulation = new RentalsManipulation(connection);
+        Rentals rentals = rentalsManipulation.viewRentals(cellphone, filterSearch);
+        if(rentals != null){
+            return null;
+        }
+
         try {
             PreparedStatement ps = connection.prepareStatement(" SELECT * FROM RESERVATIONS WHERE FROMDATETIME = ? AND  TODATETIME = ? AND VTNAME = ? AND CELLPHONE = ?");
             ps.setTimestamp(1,filterSearch.getFromDate());
@@ -57,13 +64,19 @@ public class ClerkTransactions {
         }catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
+            reservation = null;
         }
 
         return reservation;
     }
 
     public Reservations getReservationByConfNo(int confNo){
-        Reservations reservation = null;
+        Reservations reservation = new Reservations();
+        RentalsManipulation rentalsManipulation = new RentalsManipulation(connection);
+        Rentals rentals = rentalsManipulation.viewRentals(confNo);
+        if(rentals != null){
+            return null;
+        }
         try {
             PreparedStatement ps = connection.prepareStatement(" SELECT * FROM RESERVATIONS R1 where R1.CONFNO = ?");
             ps.setInt(1,confNo);
@@ -71,7 +84,6 @@ public class ClerkTransactions {
             connection.commit();
 
             while(rs.next()) {
-                reservation = new Reservations();
                 reservation.setCellphone(rs.getInt("cellphone"));
                 if(rs.wasNull()) {
                     reservation.setCellphone(-1);
@@ -92,6 +104,7 @@ public class ClerkTransactions {
         }catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
+            reservation = null;
         }
 
         return reservation;
