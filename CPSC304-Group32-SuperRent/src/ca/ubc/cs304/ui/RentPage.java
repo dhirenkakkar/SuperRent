@@ -8,6 +8,7 @@ import com.github.lgooddatepicker.zinternaltools.JIntegerTextField;
 import javafx.util.Pair;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public class RentPage extends JPanel implements PageUI{
     private JPanel customerInfoP;
 
 
+    private JLabel fromDateView;
+    private JLabel toDateView;
     private DateTimePicker fromDateTime;
     private DateTimePicker toDateTime;
 
@@ -89,6 +92,9 @@ public class RentPage extends JPanel implements PageUI{
     }
 
     private void setupRentPage() {
+
+        fromDateView = new JLabel("from date: ");
+        toDateView = new JLabel("to date: ");
 
         cncp = new JLabel("Confirmation # or Cellphone #");
         cncpText = new JIntegerTextField();
@@ -360,7 +366,11 @@ public class RentPage extends JPanel implements PageUI{
         customerInfoP.add(expDateDate);
         customerInfoP.add(rent);
 
+        customerInfoP.setLayout(new GridLayout(10,2));
+        customerInfoP.setVisible(true);
+
         customerInfo.add(customerInfoP);
+
         customerInfo.setVisible(true);
 
 
@@ -436,9 +446,14 @@ public class RentPage extends JPanel implements PageUI{
         child.add(cityCB);
         child.add(location);
         child.add(locationCB);
+        child.add(fromDateView);
         child.add(fromDateTime);
+        child.add(toDateView);
         child.add(toDateTime);
         child.add(search);
+        child.add(home);
+
+        child.setLayout(new GridLayout(7,4));
 
         add(child);
         setVisible(true);
@@ -458,6 +473,13 @@ public class RentPage extends JPanel implements PageUI{
         }
         if(rentWithoutRes != null){
             rentWithoutRes.setVisible(true);
+        }
+        if(submit != null){
+            submit.setVisible(true);
+        }
+        if(home != null){
+            home.setVisible(true);
+            add(home);
         }
     }
 

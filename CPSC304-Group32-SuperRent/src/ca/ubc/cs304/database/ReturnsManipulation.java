@@ -19,7 +19,7 @@ public class ReturnsManipulation {
 
     public void insertReturns(Returns returns){
         try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO RETURNS VALUES (?,?,?,?)");
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO RETURNS VALUES (?,?,?,?,?)");
 
             if(returns.getRid() == -1) {
                 ps.setNull(1,java.sql.Types.INTEGER);
@@ -39,6 +39,7 @@ public class ReturnsManipulation {
 
             ps.setString(4,returns.getFulltank());
             ps.setTimestamp(2, returns.getRdate());
+            ps.setFloat(5,returns.getValue());
 
             ps.executeUpdate();
             connection.commit();

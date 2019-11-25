@@ -11,4 +11,9 @@ public interface ClerkWindowDelegate {
     float costForRent(FilterSearch filterSearch);
     ReservationRentReciept rentWithoutReservation(Customers customer, CustomerRentInfo customerRentInfo);
     ReservationRentReciept rentWithReservation(CustomerRentInfo customerRentInfo, Reservations reservations);
+
+    ArrayList<Rentals> generateDailyRentals(FilterSearch filterSearch);
+    ArrayList<Rentals> generateDailyRentalsPerBranch(FilterSearch filterSearch);
+    ArrayList<Returns> generateDailyReturns(FilterSearch filterSearch);
+    ArrayList<Returns> generateDailyReturnsPerBranch(FilterSearch filterSearch);
 }

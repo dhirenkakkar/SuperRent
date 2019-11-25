@@ -60,6 +60,11 @@ public class ClerkTransactions {
                     reservation.setVid(-1);
                 }
             }
+
+            if(reservation.getConfNo() == 0){
+                return null;
+            }
+
             ps.close();
         }catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
@@ -100,6 +105,11 @@ public class ClerkTransactions {
                     reservation.setVid(-1);
                 }
             }
+
+            if(reservation.getConfNo()==0){
+                return null;
+            }
+
             ps.close();
         }catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());

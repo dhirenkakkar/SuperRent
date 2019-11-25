@@ -15,7 +15,21 @@ public class Rentals {
     private Timestamp expDate;
     private int confNo; // -1 is null
 
+    public Rentals(){
+    }
 
+    public Rentals(int rid, int vid, int cellphone, Timestamp fromDateTime, Timestamp toDateTime, float odometer, String cardName, int cardNo, Timestamp expDate, int confNo) {
+        this.rid = rid;
+        this.vid = vid;
+        this.cellphone = cellphone;
+        this.fromDateTime = fromDateTime;
+        this.toDateTime = toDateTime;
+        this.odometer = odometer;
+        this.cardName = cardName;
+        this.cardNo = cardNo;
+        this.expDate = expDate;
+        this.confNo = confNo;
+    }
 
     public int getRid() {
         return rid;

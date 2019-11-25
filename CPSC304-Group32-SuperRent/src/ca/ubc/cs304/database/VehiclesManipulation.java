@@ -134,6 +134,22 @@ public class VehiclesManipulation {
 
     }
 
+    public void updateVehicle(String status, int vid) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE VEHICLES SET STATUS = ? WHERE  VID = ?");
+            ps.setString(1,status);
+            ps.setInt(2,vid);
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
     public List<Vehicle> viewVehicle(){
         List<Vehicle> vehicles = new ArrayList<>();
         try {

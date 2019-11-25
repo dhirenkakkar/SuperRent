@@ -198,7 +198,7 @@ public class RentalsManipulation {
     }
 
     public Rentals viewRentals(int confNo){
-        Rentals rentals = new Rentals();
+        Rentals rental = new Rentals();
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM RENTALS WHERE CONFNO = ?");
             ps.setInt(1,confNo);
@@ -206,7 +206,6 @@ public class RentalsManipulation {
             connection.commit();
 
             while(rs.next()) {
-                Rentals rental = new Rentals();
                 rental.setCardName(rs.getString("cardName"));
                 rental.setCardNo(rs.getInt("cardNo"));
                 if(rs.wasNull()) {
@@ -238,15 +237,19 @@ public class RentalsManipulation {
 
             }
 
+            if(rental.getRid()==0){
+                return null;
+            }
+
             rs.close();
             ps.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
-            rentals = null;
+            rental = null;
         }
 
-        return rentals;
+        return rental;
     }
 
     public Rentals viewRentals(int cellphone, FilterSearch filterSearch){
@@ -292,6 +295,10 @@ public class RentalsManipulation {
                     rental.setOdometer(-1);
                 }
 
+            }
+
+            if(rentals.getRid()==0){
+                return null;
             }
 
             rs.close();

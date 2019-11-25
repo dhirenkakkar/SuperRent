@@ -13,6 +13,8 @@ public class ErrorHandling extends JFrame {
         err.setText(error);
         add(ok);
         add(err);
+        setSize(300,300);
+        setLocation(200,200);
         setVisible(true);
     }
 }

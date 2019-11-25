@@ -8,6 +8,7 @@ import oracle.sql.TIMESTAMP;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Timestamp;
@@ -33,6 +34,8 @@ public class ViewAvailableVehiclesPage extends JPanel implements PageUI{
     private JPanel numAv;
 
 
+    private JLabel fromDateView;
+    private JLabel toDateView;
     private DateTimePicker fromDateTime;
     private DateTimePicker toDateTime;
 
@@ -52,6 +55,10 @@ public class ViewAvailableVehiclesPage extends JPanel implements PageUI{
     }
 
     private void setupviewAvailableVehiclesPage() {
+
+        fromDateView = new JLabel("from date: ");
+        toDateView = new JLabel("to date: ");
+
 
         vtname = new JLabel("Vehicle Type");
         vtname.setVisible(true);
@@ -80,18 +87,24 @@ public class ViewAvailableVehiclesPage extends JPanel implements PageUI{
         locationCB.setVisible(true);
         add(locationCB);
 
+
+
+        // Create a DateTimePicker. (But don't add it to the form).
+        add(fromDateView);
+        fromDateTime = new DateTimePicker();
+        add(fromDateTime);
+
+        add(toDateView);
+        toDateTime = new DateTimePicker();
+        add(toDateTime);
+
         search = new JButton("Search");
         add(search);
 
         home = new JButton("Home");
         add(home);
 
-        // Create a DateTimePicker. (But don't add it to the form).
-        fromDateTime = new DateTimePicker();
-        add(fromDateTime);
-
-        toDateTime = new DateTimePicker();
-        add(toDateTime);
+        setLayout(new GridLayout(7,4));
 
         this.setVisible(true);
         parent.setVisible(true);

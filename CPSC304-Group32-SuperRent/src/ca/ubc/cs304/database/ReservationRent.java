@@ -38,7 +38,10 @@ public class ReservationRent {
     }
 
     public Pair<Rentals,Vehicle> rentWithoutReservation(Customers customer, CustomerRentInfo customerRentInfo) {
-        Pair<Reservations,Vehicle> reservationsVehiclePair =  makeReservation(customer);
+        Pair<Reservations,Vehicle> reservationsVehiclePair = makeReservation(customer);
+        if(reservationsVehiclePair == null){
+            return null;
+        }
         return rent(customerRentInfo, reservationsVehiclePair.getKey());
     }
 

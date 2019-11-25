@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 import java.util.ArrayList;
 
 public class Gui extends JFrame{
@@ -25,6 +26,8 @@ public class Gui extends JFrame{
 
     private CustomerWindowDelegate customerWindowDelegate;
     private ClerkWindowDelegate clerkWindowDelegate;
+
+    private Connection connection;
 
     public static void main (String[] args){
         SwingUtilities.invokeLater(new Runnable() {
@@ -43,10 +46,11 @@ public class Gui extends JFrame{
         setup();
     }
 
-    public Gui(CustomerWindowDelegate customerWindowDelegate, ClerkWindowDelegate clerkWindowDelegate){
+    public Gui(CustomerWindowDelegate customerWindowDelegate, ClerkWindowDelegate clerkWindowDelegate, Connection connection){
         super(gc);
         this.customerWindowDelegate = customerWindowDelegate;
         this.clerkWindowDelegate = clerkWindowDelegate;
+        this.connection = connection;
         setup();
     }
 
@@ -125,12 +129,21 @@ public class Gui extends JFrame{
             ReservationRentReciept reservationRentReciept = null;
             if(reservation != null){
                 reservationRentReciept = clerkWindowDelegate.rentWithReservation(customerRentInfoPair.getValue(),rentPage.getReservation());
+                if(reservationRentReciept == null){
+                    JOptionPane.showMessageDialog(null, "No Reservation found");
+                    return;
+                }
             }
             else{
                 reservationRentReciept = clerkWindowDelegate.rentWithoutReservation(customerRentInfoPair.getKey(),customerRentInfoPair.getValue());
             }
             if(reservationRentReciept != null){
                 rentPage.showRent(reservationRentReciept);
+            }
+            else{
+                ErrorHandling errorHandling = new ErrorHandling();
+                errorHandling.showError("Reservation was not successful");
+                return;
             }
         }
     };
@@ -201,15 +214,66 @@ public class Gui extends JFrame{
     };
 
     private void setupreturnVehiclePage() {
-        returnVehiclePage = new ReturnVehiclePage();
+        returnVehiclePage = new ReturnVehiclePage(connection);
         returnVehiclePage.getHome().addActionListener(homeActionListener);
     }
 
     private void setupgenerateReportPage() {
         generateReportPage = new GenerateReportPage();
         generateReportPage.getHome().addActionListener(homeActionListener);
-
+        generateReportPage.getDren().addActionListener(gdrnListener);
+        generateReportPage.getDrenb().addActionListener(gdrnbListener);
+        generateReportPage.getDret().addActionListener(gdrtListener);
+        generateReportPage.getDretb().addActionListener(gdrtbListener);
     }
+
+    private ActionListener gdrnListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            FilterSearch filterSearch = generateReportPage.getFilterSearch("");
+            if(filterSearch == null){
+                return;
+            }
+            ArrayList<Rentals> rentals = clerkWindowDelegate.generateDailyRentals(filterSearch);
+            generateReportPage.showRentals(rentals);
+        }
+    };
+
+    private ActionListener gdrnbListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            FilterSearch filterSearch = generateReportPage.getFilterSearch("branch");
+            if(filterSearch == null){
+                return;
+            }
+            ArrayList<Rentals> rentals = clerkWindowDelegate.generateDailyRentalsPerBranch(filterSearch);
+            generateReportPage.showRentals(rentals);
+        }
+    };
+
+    private ActionListener gdrtListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            FilterSearch filterSearch = generateReportPage.getFilterSearch("");
+            if(filterSearch == null){
+                return;
+            }
+            ArrayList<Returns> returns  = clerkWindowDelegate.generateDailyReturns(filterSearch);
+            generateReportPage.showReturns(returns);
+        }
+    };
+
+    private ActionListener gdrtbListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            FilterSearch filterSearch = generateReportPage.getFilterSearch("branch");
+            if(filterSearch == null){
+                return;
+            }
+            ArrayList<Returns> returns  = clerkWindowDelegate.generateDailyReturns(filterSearch);
+            generateReportPage.showReturns(returns);
+        }
+    };
 
 
 

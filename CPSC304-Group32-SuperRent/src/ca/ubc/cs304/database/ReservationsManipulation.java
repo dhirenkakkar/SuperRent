@@ -142,6 +142,43 @@ public class ReservationsManipulation {
         return reservations;
     }
 
+    public Reservations viewReservation(int confNo){
+        Reservations reservation = new Reservations();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM RESERVATIONS WHERE CONFNO = ?");
+            ps.setInt(1,confNo);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                reservation.setCellphone(rs.getInt("cellphone"));
+                if(rs.wasNull()) {
+                    reservation.setCellphone(-1);
+                }
+                reservation.setConfNo(rs.getInt("confNo"));
+                if(rs.wasNull()) {
+                    reservation.setConfNo(-1);
+                }
+                reservation.setFromDateTime(rs.getTimestamp("fromDateTime"));
+                reservation.setToDateTime(rs.getTimestamp("toDateTime"));
+
+                reservation.setVid(rs.getInt("vid"));
+                if(rs.wasNull()) {
+                    reservation.setVid(-1);
+                }
+                reservation.setVtname(rs.getString("vtname"));
+            }
+
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+            reservation = null;
+        }
+
+        return reservation;
+    }
+
     public Reservations viewReservation(Customers customers, FilterSearch filterSearch){
         Reservations reservation = new Reservations();
         try {
@@ -173,6 +210,10 @@ public class ReservationsManipulation {
                     reservation.setVid(-1);
                 }
 
+            }
+
+            if(reservation.getConfNo() == 0){
+                return null;
             }
 
             rs.close();

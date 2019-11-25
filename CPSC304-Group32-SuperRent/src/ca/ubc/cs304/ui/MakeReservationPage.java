@@ -6,6 +6,7 @@ import com.github.lgooddatepicker.components.DateTimePicker;
 import com.github.lgooddatepicker.zinternaltools.JIntegerTextField;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -33,7 +34,8 @@ public class MakeReservationPage extends JPanel implements PageUI{
     private JFrame customerInfo;
     private JPanel customerInfoP;
 
-
+    private JLabel fromDateView;
+    private JLabel toDateView;
     private DateTimePicker fromDateTime;
     private DateTimePicker toDateTime;
 
@@ -69,6 +71,9 @@ public class MakeReservationPage extends JPanel implements PageUI{
 
     private void setupMakeReservationPage() {
 
+        fromDateView = new JLabel("from date: ");
+        toDateView = new JLabel("to date: ");
+
         vtname = new JLabel("Vehicle Type");
         vtname.setVisible(true);
         add(vtname);
@@ -96,16 +101,13 @@ public class MakeReservationPage extends JPanel implements PageUI{
         locationCB.setVisible(true);
         add(locationCB);
 
-        search = new JButton("Search");
-        add(search);
-
-        home = new JButton("Home");
-        add(home);
 
         // Create a DateTimePicker. (But don't add it to the form).
+        add(fromDateView);
         fromDateTime = new DateTimePicker();
         add(fromDateTime);
 
+        add(toDateView);
         toDateTime = new DateTimePicker();
         add(toDateTime);
 
@@ -113,6 +115,13 @@ public class MakeReservationPage extends JPanel implements PageUI{
         submit = new JButton("Submit");
         cancel = new JButton("Cancel");
 
+        search = new JButton("Search");
+        add(search);
+
+        home = new JButton("Home");
+        add(home);
+
+        setLayout(new GridLayout(7,4));
 
         this.setVisible(true);
         parent.setVisible(true);

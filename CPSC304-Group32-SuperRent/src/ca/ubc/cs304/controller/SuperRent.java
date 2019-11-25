@@ -47,7 +47,7 @@ public class SuperRent implements LoginWindowDelegate, ClerkWindowDelegate, Cust
                 @Override
                 public void run() {
                     // Create an instance of the demo.
-                    Gui gui = new Gui(instance,instance);
+                    Gui gui = new Gui(instance,instance,dbHandler.getConnection());
                     // Make the demo visible on the screen.
                     gui.setVisible(true);
                 }
@@ -116,6 +116,9 @@ public class SuperRent implements LoginWindowDelegate, ClerkWindowDelegate, Cust
     @Override
     public ReservationRentReciept rentWithoutReservation(Customers customer, CustomerRentInfo customerRentInfo) {
         Pair<Rentals,Vehicle> rentalsVehiclePair = rent.rentWithoutReservation(customer, customerRentInfo);
+        if(rentalsVehiclePair == null){
+            return null;
+        }
         Rentals rent = rentalsVehiclePair.getKey();
         Vehicle vehicle = rentalsVehiclePair.getValue();
         ReservationRentReciept reservationRentReciept = new ReservationRentReciept(rent.getConfNo(),vehicle.getVtname(),rent.getCellphone(),rent.getFromDateTime(),rent.getToDateTime(),vehicle.getLocation(),vehicle.getCity());
@@ -130,5 +133,25 @@ public class SuperRent implements LoginWindowDelegate, ClerkWindowDelegate, Cust
         Vehicle vehicle = rentalsVehiclePair.getValue();
         ReservationRentReciept reservationRentReciept = new ReservationRentReciept(rent.getConfNo(),vehicle.getVtname(),rent.getCellphone(),rent.getFromDateTime(),rent.getToDateTime(),vehicle.getLocation(),vehicle.getCity());
         return reservationRentReciept;
+    }
+
+    @Override
+    public ArrayList<Rentals> generateDailyRentals(FilterSearch filterSearch) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<Rentals> generateDailyRentalsPerBranch(FilterSearch filterSearch) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<Returns> generateDailyReturns(FilterSearch filterSearch) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<Returns> generateDailyReturnsPerBranch(FilterSearch filterSearch) {
+        return new ArrayList<>();
     }
 }
