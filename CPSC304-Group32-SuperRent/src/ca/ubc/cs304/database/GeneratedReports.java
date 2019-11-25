@@ -5,14 +5,14 @@ Statement Return = con.createStatement();
 Statement ReturnBranch = con.createStatement();
 
 
-public totalRented(timestamp date){
+public totalRented(date){
     Rental.executeQuery("SELECT r.fromDateTime AS 'Date', v.location AS 'Location', 
     SUM (COUNT (v.vid)) OVER (PARTITION BY v.location) AS 'Total new rentals at branch', 
     vt.vtname AS 'Vehicle type', COUNT (v.vid) AS 'Total new rentals'"
     +
     "FROM Vehicle v, Rentals r, VehicleTypes vt"
     +
-    "WHERE (r.vid = v.vid) AND (r.fromDateTime < TO_TIMESTAMP('2019-10-14', 'YYYY-MM-DD'))" 
+    "WHERE (r.vid = v.vid) AND (r.fromDateTime = TO_TIMESTAMP(date, 'YYYY-MM-DD'))" 
     +
     "GROUP BY v.location, v.vtname"
     +
@@ -20,23 +20,23 @@ public totalRented(timestamp date){
 }
 
 
-public branchRented(timestamp date, location branch){
+public branchRented(date, branch){
     RentalBranch.executeQuery("SELECT r.fromDateTime AS 'Date',v.location AS 'Location', 
     SUM (COUNT (v.vid)) OVER (PARTITION BY v.location) AS 'Total new rentals at branch', 
     vt.vtname AS 'Vehicle type', COUNT (v.vid) AS 'Total new rentals'"
     +
     "FROM Vehicle v, Rentals r, VehicleTypes vt"
     +
-    "WHERE (v.location = 'Mia Street') AND (r.vid = v.vid) AND (r.fromDateTime < TO_TIMESTAMP('2019-10-14', 'YYYY-MM-DD'))"
+    "WHERE (v.location = branch) AND (r.vid = v.vid) AND (r.fromDateTime = TO_TIMESTAMP(date, 'YYYY-MM-DD'))"
     +
     "GROUP BY v.location, vt.vtname"
     +
-    "ORDER BY r.fromDateTime ASC");
+    "ORDER BY r.fromDateTime");
 }
 
 
 
-public totalReturned(timestamp date){
+public totalReturned(date){
     Return.executeQuery("SELECT rt.rdate AS 'Return date', v.location AS 'Location', 
     SUM (COUNT (v.vid)) OVER (PARTITION BY v.location ORDER BY v.location ASC) AS 'Total new returns at branch', 
     vt.vtname AS 'Vehicle type', COUNT (v.vid) AS 'Total new returns', SUM (rt.value) AS 'Total revenue',
@@ -44,7 +44,7 @@ public totalReturned(timestamp date){
     +
     "FROM Vehicle v, Rentals r, [Returns] rt, VehicleTypes vt"
     +
-    "WHERE (rt.rid = r.rid) AND (r.vid = v.vid) AND (rt.rdate = TO_TIMESTAMP('2019-10-18', 'YYYY-MM-DD'))"
+    "WHERE (rt.rid = r.rid) AND (r.vid = v.vid) AND (rt.rdate = TO_TIMESTAMP(date, 'YYYY-MM-DD'))"
     +
     "GROUP BY v.location, vt.vtname"
     +
@@ -52,7 +52,7 @@ public totalReturned(timestamp date){
 }
 
 
-public branchReturned(timestamp date, location branch){
+public branchReturned(date, branch){
     ReturnBranch.executeQuery("SELECT rt.rdate AS 'Return date', v.location AS 'Location', 
     SUM (COUNT (v.vid)) OVER (PARTITION BY v.location) AS 'Total new returns at branch', 
     vt.vtname AS 'Vehicle type', COUNT (v.vid) AS 'Total new returns', SUM (rt.value) AS 'Total revenue',
@@ -60,7 +60,7 @@ public branchReturned(timestamp date, location branch){
     +
     "FROM Vehicle v, Rentals r, [Returns] rt, VehicleTypes vt"
     +
-    "WHERE (v.location = 'Scott Road') AND (rt.rid = r.rid) AND (r.vid = v.vid) AND (rt.rdate = TO_TIMESTAMP('2019-10-18', 'YYYY-MM-DD'))"
+    "WHERE (v.location = 'branch') AND (rt.rid = r.rid) AND (r.vid = v.vid) AND (rt.rdate = TO_TIMESTAMP(date, 'YYYY-MM-DD'))"
     +
     "GROUP BY v.vlocation, v.vtname"
     +
